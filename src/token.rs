@@ -1,22 +1,30 @@
-type TokenType = &'static str;
+pub type TokenType = &'static str;
 
 #[derive(Debug)]
 pub struct Token {
-   pub token_type: TokenType,
-   pub literal: String,
+    pub token_type: TokenType,
+    pub literal: String,
 }
 
-pub const ILLEGAL: &str = "ILLEGAL";
-pub const EOF: &str = "EOF";
-pub const IDENT: &str = "IDENT";
-pub const INT: &str = "INT";
-pub const ASSIGN: &str = "=";
-pub const PLUS: &str = "+";
-pub const COMMA: &str = ",";
-pub const SEMICOLON: &str = ";";
-pub const LPAREN: &str = "(";
-pub const RPAREN: &str = ")";
-pub const LBRACE: &str = "{";
-pub const RBRACE: &str = "}";
-pub const FUNCTION: &str = "FUNCTION";
-pub const LET: &str = "LET";
+pub const ILLEGAL: TokenType = "ILLEGAL";
+pub const EOF: TokenType = "EOF";
+pub const IDENT: TokenType = "IDENT";
+pub const INT: TokenType = "INT";
+pub const ASSIGN: TokenType = "=";
+pub const PLUS: TokenType = "+";
+pub const COMMA: TokenType = ",";
+pub const SEMICOLON: TokenType = ";";
+pub const LPAREN: TokenType = "(";
+pub const RPAREN: TokenType = ")";
+pub const LBRACE: TokenType = "{";
+pub const RBRACE: TokenType = "}";
+pub const FUNCTION: TokenType = "FUNCTION";
+pub const LET: TokenType = "LET";
+
+pub fn lookup_ident(identifier: &String) -> TokenType {
+    match identifier.as_str() {
+        "fn" => FUNCTION,
+        "let" => LET,
+        _ => IDENT,
+    }
+}

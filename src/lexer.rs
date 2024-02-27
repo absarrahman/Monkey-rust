@@ -53,12 +53,18 @@ impl Lexer {
         let token = match self.ch {
             '=' => Lexer::new_token(token::ASSIGN, self.ch),
             '+' => Lexer::new_token(token::PLUS, self.ch),
+            '-' => Lexer::new_token(token::MINUS, self.ch),
             '{' => Lexer::new_token(token::LBRACE, self.ch),
             '}' => Lexer::new_token(token::RBRACE, self.ch),
             ',' => Lexer::new_token(token::COMMA, self.ch),
             ';' => Lexer::new_token(token::SEMICOLON, self.ch),
             '(' => Lexer::new_token(token::LPAREN, self.ch),
             ')' => Lexer::new_token(token::RPAREN, self.ch),
+            '!' => Lexer::new_token(token::BANG, self.ch),
+            '*' => Lexer::new_token(token::ASTERISK, self.ch),
+            '/' => Lexer::new_token(token::SLASH, self.ch),
+            '<' => Lexer::new_token(token::LT, self.ch),
+            '>' => Lexer::new_token(token::GT, self.ch),
             '\0' => Token {
                 token_type: token::EOF,
                 literal: "".to_string(),
@@ -201,6 +207,14 @@ mod tests {
                 x+y;
             }
             let result = add(five, ten);
+            !-/*5;
+            5 < 10 > 5;
+
+            if (5 < 10) {
+                return true;
+            } else {
+                return false;
+            }
             "#;
 
         let expected_res: Vec<Token> = vec![
@@ -345,6 +359,122 @@ mod tests {
                 literal: ";".to_string(),
             },
             Token {
+                token_type: token::BANG,
+                literal: "!".to_string(),
+            },
+            Token {
+                token_type: token::MINUS,
+                literal: "-".to_string(),
+            },
+            Token {
+                token_type: token::SLASH,
+                literal: "/".to_string(),
+            },
+            Token {
+                token_type: token::ASTERISK,
+                literal: "*".to_string(),
+            },
+            Token {
+                token_type: token::INT,
+                literal: "5".to_string(),
+            },
+            Token {
+                token_type: token::SEMICOLON,
+                literal: ";".to_string(),
+            },
+            Token {
+                token_type: token::INT,
+                literal: "5".to_string(),
+            },
+            Token {
+                token_type: token::LT,
+                literal: "<".to_string(),
+            },
+            Token {
+                token_type: token::INT,
+                literal: "10".to_string(),
+            },
+            Token {
+                token_type: token::GT,
+                literal: ">".to_string(),
+            },
+            Token {
+                token_type: token::INT,
+                literal: "5".to_string(),
+            },
+            Token {
+                token_type: token::SEMICOLON,
+                literal: ";".to_string(),
+            },
+            Token {
+                token_type: token::IF,
+                literal: "if".to_string(),
+            },
+            Token {
+                token_type: token::LPAREN,
+                literal: "(".to_string(),
+            },
+            Token {
+                token_type: token::INT,
+                literal: "5".to_string(),
+            },
+            Token {
+                token_type: token::LT,
+                literal: "<".to_string(),
+            },
+            Token {
+                token_type: token::INT,
+                literal: "10".to_string(),
+            },
+            Token {
+                token_type: token::RPAREN,
+                literal: ")".to_string(),
+            },
+            Token {
+                token_type: token::LBRACE,
+                literal: "{".to_string(),
+            },
+            Token {
+                token_type: token::RETURN,
+                literal: "return".to_string(),
+            },
+            Token {
+                token_type: token::TRUE,
+                literal: "true".to_string(),
+            },
+            Token {
+                token_type: token::SEMICOLON,
+                literal: ";".to_string(),
+            },
+            Token {
+                token_type: token::RBRACE,
+                literal: "}".to_string(),
+            },
+            Token {
+                token_type: token::ELSE,
+                literal: "else".to_string(),
+            },
+            Token {
+                token_type: token::LBRACE,
+                literal: "{".to_string(),
+            },
+            Token {
+                token_type: token::RETURN,
+                literal: "return".to_string(),
+            },
+            Token {
+                token_type: token::FALSE,
+                literal: "false".to_string(),
+            },
+            Token {
+                token_type: token::SEMICOLON,
+                literal: ";".to_string(),
+            },
+            Token {
+                token_type: token::RBRACE,
+                literal: "}".to_string(),
+            },
+            Token {
                 token_type: token::EOF,
                 literal: "".to_string(),
             },
@@ -354,6 +484,7 @@ mod tests {
 
         for (index, expected_token) in expected_res.into_iter().enumerate() {
             let token = lexer.next_token();
+            println!("{} {}", token.token_type, token.literal);
             assert_eq!(
                 expected_token.token_type, token.token_type,
                 "FAILED AT test[{index}] - expected {}, got {}",

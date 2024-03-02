@@ -31,6 +31,8 @@ pub const FALSE: TokenType = "FALSE";
 pub const IF: TokenType = "IF";
 pub const ELSE: TokenType = "ELSE";
 pub const RETURN: TokenType = "RETURN";
+pub const EQ: TokenType = "EQ";
+pub const NOT_EQ: TokenType = "NOT_EQ";
 
 pub fn lookup_ident(identifier: &str) -> TokenType {
     match identifier {

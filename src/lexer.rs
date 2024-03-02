@@ -51,7 +51,17 @@ impl Lexer {
         }
 
         let token = match self.ch {
-            '=' => Lexer::new_token(token::ASSIGN, self.ch),
+            '=' => {
+                if self.peek_char() == '=' {
+                    self.read_char();
+                    Token {
+                        token_type: token::EQ,
+                        literal: "==".to_string(),
+                    }
+                } else {
+                    Lexer::new_token(token::ASSIGN, self.ch)
+                }
+            }
             '+' => Lexer::new_token(token::PLUS, self.ch),
             '-' => Lexer::new_token(token::MINUS, self.ch),
             '{' => Lexer::new_token(token::LBRACE, self.ch),
@@ -60,7 +70,17 @@ impl Lexer {
             ';' => Lexer::new_token(token::SEMICOLON, self.ch),
             '(' => Lexer::new_token(token::LPAREN, self.ch),
             ')' => Lexer::new_token(token::RPAREN, self.ch),
-            '!' => Lexer::new_token(token::BANG, self.ch),
+            '!' => {
+                if self.peek_char() == '=' {
+                    self.read_char();
+                    Token {
+                        token_type: token::NOT_EQ,
+                        literal: "!=".to_string(),
+                    }
+                } else {
+                    Lexer::new_token(token::BANG, self.ch)
+                }
+            }
             '*' => Lexer::new_token(token::ASTERISK, self.ch),
             '/' => Lexer::new_token(token::SLASH, self.ch),
             '<' => Lexer::new_token(token::LT, self.ch),
@@ -129,6 +149,13 @@ impl Lexer {
 
     fn is_digit(literal: char) -> bool {
         literal.is_ascii_digit()
+    }
+
+    fn peek_char(&self) -> char {
+        if self.read_position >= self.input.len() {
+            return '\0';
+        }
+        self.input[self.read_position]
     }
 }
 
@@ -215,6 +242,9 @@ mod tests {
             } else {
                 return false;
             }
+
+            10 == 10;
+            10 != 9;
             "#;
 
         let expected_res: Vec<Token> = vec![
@@ -475,6 +505,38 @@ mod tests {
                 literal: "}".to_string(),
             },
             Token {
+                token_type: token::INT,
+                literal: "10".to_string(),
+            },
+            Token {
+                token_type: token::EQ,
+                literal: "==".to_string(),
+            },
+            Token {
+                token_type: token::INT,
+                literal: "10".to_string(),
+            },
+            Token {
+                token_type: token::SEMICOLON,
+                literal: ";".to_string(),
+            },
+            Token {
+                token_type: token::INT,
+                literal: "10".to_string(),
+            },
+            Token {
+                token_type: token::NOT_EQ,
+                literal: "!=".to_string(),
+            },
+            Token {
+                token_type: token::INT,
+                literal: "9".to_string(),
+            },
+            Token {
+                token_type: token::SEMICOLON,
+                literal: ";".to_string(),
+            },
+            Token {
                 token_type: token::EOF,
                 literal: "".to_string(),
             },
@@ -484,7 +546,6 @@ mod tests {
 
         for (index, expected_token) in expected_res.into_iter().enumerate() {
             let token = lexer.next_token();
-            println!("{} {}", token.token_type, token.literal);
             assert_eq!(
                 expected_token.token_type, token.token_type,
                 "FAILED AT test[{index}] - expected {}, got {}",

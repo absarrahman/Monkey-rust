@@ -5,7 +5,7 @@ use crate::token::TokenType;
 
 #[derive(Debug)]
 /// Responsible for recognizing keywords
-struct Lexer {
+pub struct Lexer {
     /// input given to the lexer
     input: Vec<char>,
     /// points to the current position
